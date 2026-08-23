@@ -1,5 +1,7 @@
 node_modules/
 package/
-artifacts/
+artifacts/*
+!artifacts/*.boboplugin
+!artifacts/*.boboplugin.sha256
 coverage/
 *.log

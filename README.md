@@ -11,7 +11,7 @@ BOBOCloud 第二个官方插件。在编辑器工作区内，以只读方式预�
 | Excel (`.xlsx`, `.xlsm`, `.xltx`) | 工作表切换、搜索、虚拟表格、只读值显示 |
 | PDF (`.pdf`) | 翻页、缩放、旋转、文本搜索与选择 |
 
-旧式二进制 `.xls` 不在 1.0.0 的支持范围内。插件不会执行 Excel 公式或宏。
+旧式二进制 `.xls` 不在 1.0.1 的支持范围内。插件不会执行 Excel 公式或宏。
 
 ## 安装
 
@@ -39,7 +39,7 @@ npm test
 npm run verify
 ```
 
-产物位于 `artifacts/bobocloud.document-preview-1.0.0.boboplugin`，旁边的 `.sha256` 文件用于独立校验。
+产物位于 `artifacts/bobocloud.document-preview-1.0.1.boboplugin`，旁边的 `.sha256` 文件用于独立校验。
 
 ## English
 
@@ -47,7 +47,7 @@ BOBOCloud's second official plugin provides read-only previews for Markdown, CSV
 
 Official status does not grant a sandbox bypass. The activation Worker and each opaque-origin document iframe receive only the two declared capabilities. A viewer can read the one document explicitly opened by the user through a short-lived, revalidated handle; it cannot enumerate the workspace, access paths, use the network, or reach Electron and host objects.
 
-Legacy binary `.xls` is intentionally unsupported in 1.0.0. Excel formulas and macros are never executed.
+Legacy binary `.xls` is intentionally unsupported in 1.0.1. Excel formulas and macros are never executed.
 
 ## License
 
