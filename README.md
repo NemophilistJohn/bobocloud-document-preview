@@ -26,7 +26,7 @@ BOBOCloud 第二个官方插件。在编辑器工作区内，以只读方式预�
 - 激活入口运行在无 DOM、无 Node/Electron、无网络的专用 Worker 中。
 - 每个预览入口运行在 `sandbox="allow-scripts"` 的不透明源 iframe 中，不含 `allow-same-origin`。
 - 插件只声明 `documentViews.register` 和 `documents.read` 两项权限。
-- 文件读取句柄绑定当前 IPC 发送方、插件、视图、工作区、文件大小和修改时间；每个分块都会重新校验。
+- 文件读取句柄绑定当前 IPC 发送方、插件、视图、工作区、文件身份、大小和修改时间；每个分块都会重新校验。
 - 插件看不到工作区根路径、绝对文件路径、其他文件、预加载桥、凭据或任意 IPC。
 - 关闭标签、切换工作区、禁用插件、撤销权限或文件发生变化后，读取会话立即失效。
 - 所有可执行入口和资源都在 schema 2 manifest 中逐项声明，并在每次加载前校验 SHA-256。
@@ -51,4 +51,4 @@ Legacy binary `.xls` is intentionally unsupported in 1.0.0. Excel formulas and m
 
 ## License
 
-MIT. Bundled third-party components retain their own licenses; see [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
+Apache-2.0. Bundled third-party components retain their own licenses; see [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
