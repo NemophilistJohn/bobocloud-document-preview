@@ -1,0 +1,30 @@
+{
+  "name": "bobocloud-document-preview",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Official isolated PDF, CSV, XLSX, and Markdown preview plugin for BOBOCloud.",
+  "scripts": {
+    "clean": "node scripts/clean.mjs",
+    "build": "node scripts/build.mjs",
+    "package": "node scripts/package.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "verify": "npm run test && npm run package && node scripts/verify-package.mjs"
+  },
+  "dependencies": {
+    "dompurify": "3.4.14",
+    "lucide": "1.33.0",
+    "marked": "18.0.10",
+    "papaparse": "5.6.0",
+    "pdfjs-dist": "6.2.108",
+    "read-excel-file": "9.3.10"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "fflate": "0.8.3"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
