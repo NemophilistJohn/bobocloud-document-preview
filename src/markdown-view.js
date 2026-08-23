@@ -1,5 +1,4 @@
-import DOMPurify from 'dompurify';
-import { marked } from 'marked';
+import { lockDownRenderedContent, sanitizeMarkdown } from './shared/document-html.js';
 import { createShell, previewError, segmentedControl, showPreviewError, showStatus, t } from './shared/ui.js';
 
 const MAX_MARKDOWN_BYTES = 8 * 1024 * 1024;
@@ -11,15 +10,6 @@ function safeId(value, used) {
   while (used.has(id)) id = base + '-' + sequence++;
   used.add(id);
   return id;
-}
-
-function sanitizeMarkdown(source) {
-  const raw = marked.parse(source, { gfm: true, breaks: false, async: false });
-  return DOMPurify.sanitize(raw, {
-    USE_PROFILES: { html: true },
-    FORBID_TAGS: ['style', 'form', 'input', 'button', 'textarea', 'select', 'iframe', 'object', 'embed', 'video', 'audio'],
-    FORBID_ATTR: ['style', 'srcdoc', 'autofocus']
-  });
 }
 
 export async function activate(context) {
@@ -40,6 +30,7 @@ export async function activate(context) {
     const article = document.createElement('article');
     article.className = 'markdown-preview';
     article.innerHTML = sanitizeMarkdown(source);
+    lockDownRenderedContent(article, { allowEmbeddedImages: true });
     const code = document.createElement('pre');
     code.className = 'markdown-source hidden';
     code.textContent = source;
@@ -56,15 +47,6 @@ export async function activate(context) {
       item.textContent = heading.textContent;
       item.addEventListener('click', () => heading.scrollIntoView({ block: 'start' }));
       outline.append(item);
-    }
-
-    for (const anchor of article.querySelectorAll('a[href]')) {
-      anchor.title = anchor.getAttribute('href') || '';
-      anchor.removeAttribute('href');
-    }
-    for (const image of article.querySelectorAll('img[src]')) {
-      const src = image.getAttribute('src') || '';
-      if (!/^data:image\/(?:png|jpeg|gif|webp);/i.test(src)) image.replaceWith(document.createTextNode(image.alt || ''));
     }
 
     layout.append(outline, article, code);

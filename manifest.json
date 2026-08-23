@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "id": "bobocloud.document-preview",
   "displayName": "BOBOCloud Document Preview",
-  "description": "Safely previews PDF, CSV, XLSX, and Markdown files inside isolated document views.",
-  "version": "1.0.1",
+  "description": "Safely previews office documents, data files, images, notebooks, archives, and PDFs inside isolated document views.",
+  "version": "1.1.0",
   "engines": {
     "bobocloud": ">=2.6.1 <3.0.0",
     "pluginApi": "^1.3.0"
@@ -66,6 +66,69 @@
           "dist/pdf.worker.min.mjs"
         ],
         "priority": 100
+      },
+      {
+        "id": "bobocloud.document-preview.word",
+        "extensions": [
+          ".docx",
+          ".docm",
+          ".dotx",
+          ".dotm"
+        ],
+        "entry": "dist/docx-view.js",
+        "resources": [
+          "dist/view.css",
+          "dist/docx-worker.js"
+        ],
+        "priority": 100
+      },
+      {
+        "id": "bobocloud.document-preview.image",
+        "extensions": [
+          ".png",
+          ".jpg",
+          ".jpeg",
+          ".gif",
+          ".webp",
+          ".bmp",
+          ".avif",
+          ".ico"
+        ],
+        "entry": "dist/image-view.js",
+        "resources": [
+          "dist/view.css"
+        ],
+        "priority": 100
+      },
+      {
+        "id": "bobocloud.document-preview.notebook",
+        "extensions": [
+          ".ipynb"
+        ],
+        "entry": "dist/notebook-view.js",
+        "resources": [
+          "dist/view.css"
+        ],
+        "priority": 100
+      },
+      {
+        "id": "bobocloud.document-preview.archive",
+        "extensions": [
+          ".zip",
+          ".jar",
+          ".war",
+          ".ear",
+          ".apk",
+          ".whl",
+          ".epub",
+          ".vsix",
+          ".nupkg"
+        ],
+        "entry": "dist/archive-view.js",
+        "resources": [
+          "dist/view.css"
+        ],
+        "priority": 100
       }
     ]
   },
@@ -78,16 +141,21 @@
   "integrity": {
     "algorithm": "sha256",
     "files": {
-      "dist/csv-view.js": "ee18fb5f54443ec20b468d1b5eef40c0d681629fbb018082e9306a485e45dc98",
-      "dist/excel-view.js": "10934e6563157c3d9dbbb713ccfad210b84955abc52481485d5a5d48f7395680",
-      "dist/extension.js": "d51c882ba6c85a8f688181e70365dfa0bdf6b51ca931ac6c5354062f92c608df",
-      "dist/markdown-view.js": "d085dd36a146d09155a75e5df4f2fbc333dbc1bbc74506d8a1e52fcbed290303",
-      "dist/pdf-view.js": "810e2ef7abb56c3a424672a597f23a04cc90c324832812f6deda63bf6e8848bc",
+      "dist/archive-view.js": "bc4736a15f432c31a13e3d9b35e565c91a5b408760b5c9b1c9dd3cb0d00174cb",
+      "dist/csv-view.js": "84c4e925020ca32eca2394fa669f3c3235bc52cb070504b6fc8565c7862df4b1",
+      "dist/docx-view.js": "c8d52ecd1fd690aa3e694e52861e557d3aafedc6ac26871791aa5b5e8cf48015",
+      "dist/docx-worker.js": "ce4f95df2c7eee4ec2cc196df24c76cd97c0a93c5d1cf113ee718b1a10d5cea4",
+      "dist/excel-view.js": "07118822fac08a1cf9e42ed93ddfda1e782234c89918acec9070fbd04c851a6a",
+      "dist/extension.js": "e8f6ea10bc30520dc3de476188dbf2656af3376b4082b69604d62935a34edeb7",
+      "dist/image-view.js": "63609b31d39fb1bdde05c0241d992a40a2001f411ee80aff0955128ace19e3df",
+      "dist/markdown-view.js": "8d81bdbe27e346056101d53a61649723da3bb0eba58ec0682363bffc3dbec6f4",
+      "dist/notebook-view.js": "a943825fad0065b04b52e4c84056a68786e626ba9554df94c8f99d32a3943e55",
+      "dist/pdf-view.js": "8ae99d5731320ab3ab237c54fbfa7e5a64007b5b2559b966f05213a508f9cada",
       "dist/pdf.worker.min.mjs": "bc0d1b88ea0b66196b1d36a58ac243c6d92adfe725624e2a9fdd381bdf8ef434",
-      "dist/view.css": "13323e27f75d1a636564674efc2fed700b82f3ed2aa585546e814567427ac175",
-      "language-packs/en/messages.json": "6c029caca57ef2f39d2be8c0c1e5e7e6f820410d37d10041f9d2077782649cab",
-      "language-packs/ja/messages.json": "422a39b993e85771aaaa840a896298dc0c48632d33ec8ed063cadf9cb19e6a56",
-      "language-packs/zh-CN/messages.json": "05fc9f905ed0e1e4f648dc2d2a43f961bd6e9071a6db67a2fce0f42f44ce37ca"
+      "dist/view.css": "511a53ea9029853d0c6a64509cb89ca169ec70cc858835241bd8b32a6b682337",
+      "language-packs/en/messages.json": "2299851bc2eebcbd90bcfeff18320e7b7e618dd404b79c299ddc6a5cd6473547",
+      "language-packs/ja/messages.json": "5df48012e4b2fb9b62f6cbd6918a84c046d79e50ada242346858579bf2a405a9",
+      "language-packs/zh-CN/messages.json": "8553ac7b7aa72a74dff7decfb60c61d45612eac59e61a31faf65a161bab18b2e"
     }
   }
 }

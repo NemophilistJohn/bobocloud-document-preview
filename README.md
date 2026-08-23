@@ -10,8 +10,12 @@ BOBOCloud 第二个官方插件。在编辑器工作区内，以只读方式预�
 | CSV / TSV (`.csv`, `.tsv`) | UTF-8/GB18030 解码、搜索、列排序、虚拟表格 |
 | Excel (`.xlsx`, `.xlsm`, `.xltx`) | 工作表切换、搜索、虚拟表格、只读值显示 |
 | PDF (`.pdf`) | 翻页、缩放、旋转、文本搜索与选择 |
+| Word (`.docx`, `.docm`, `.dotx`, `.dotm`) | 清洗后的排版、表格、列表、内嵌图片与搜索 |
+| 图片 (`.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`, `.bmp`, `.avif`, `.ico`) | 适应窗口、缩放、旋转、尺寸与文件大小 |
+| Jupyter Notebook (`.ipynb`) | Markdown、代码、纯文本/安全 HTML/内嵌图片输出；不执行代码或 widgets |
+| ZIP 容器 (`.zip`, `.jar`, `.war`, `.ear`, `.apk`, `.whl`, `.epub`, `.vsix`, `.nupkg`) | 安全目录检查、搜索、排序与压缩信息；不解压到磁盘 |
 
-旧式二进制 `.xls` 不在 1.0.1 的支持范围内。插件不会执行 Excel 公式或宏。
+旧式二进制 `.xls`、`.doc`、`.ppt` 不在 1.1.0 的支持范围内。插件不会执行 Excel 公式、Office 宏、Notebook 代码或 HTML 脚本。
 
 ## 安装
 
@@ -37,17 +41,20 @@ BOBOCloud 第二个官方插件。在编辑器工作区内，以只读方式预�
 npm install
 npm test
 npm run verify
+npm run test:ui
 ```
 
-产物位于 `artifacts/bobocloud.document-preview-1.0.1.boboplugin`，旁边的 `.sha256` 文件用于独立校验。
+`test:ui` 会使用相邻主项目的 Electron 客户端安装当前真实产物，并验证新增格式的隔离渲染。
+
+产物位于 `artifacts/bobocloud.document-preview-1.1.0.boboplugin`，旁边的 `.sha256` 文件用于独立校验。
 
 ## English
 
-BOBOCloud's second official plugin provides read-only previews for Markdown, CSV/TSV, XLSX-family workbooks, and PDF files. It includes searchable virtualized tables, sheet navigation, sanitized Markdown rendering, and practical PDF controls.
+BOBOCloud's second official plugin provides read-only previews for Markdown, CSV/TSV, XLSX-family workbooks, PDF, Word OOXML, common images, Jupyter Notebooks, and ZIP-based package formats. It includes searchable virtualized tables, sanitized rich-document rendering, safe notebook outputs, image controls, and archive inspection without extraction.
 
 Official status does not grant a sandbox bypass. The activation Worker and each opaque-origin document iframe receive only the two declared capabilities. A viewer can read the one document explicitly opened by the user through a short-lived, revalidated handle; it cannot enumerate the workspace, access paths, use the network, or reach Electron and host objects.
 
-Legacy binary `.xls` is intentionally unsupported in 1.0.1. Excel formulas and macros are never executed.
+Legacy binary `.xls`, `.doc`, and `.ppt` are intentionally unsupported in 1.1.0. Excel formulas, Office macros, Notebook code, widgets, and embedded HTML scripts are never executed.
 
 ## License
 

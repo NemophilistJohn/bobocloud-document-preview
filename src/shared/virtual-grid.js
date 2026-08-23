@@ -13,11 +13,23 @@ export function createVirtualGrid(container, options) {
   let rows = options.rows || [];
   let columns = Math.max(1, options.columns || 1);
   let header = options.header || [];
+  let columnWidths = options.columnWidths || [];
   let frame = 0;
+
+  function widthAt(column) {
+    const value = Number(columnWidths[column]);
+    return Number.isFinite(value) && value >= 60 && value <= 600 ? value : COLUMN_WIDTH;
+  }
+
+  function offsetAt(column) {
+    let offset = 54;
+    for (let index = 0; index < column; index += 1) offset += widthAt(index);
+    return offset;
+  }
 
   function render() {
     frame = 0;
-    const width = Math.max(viewport.clientWidth, columns * COLUMN_WIDTH + 54);
+    const width = Math.max(viewport.clientWidth, offsetAt(columns));
     const height = Math.max(viewport.clientHeight, (rows.length + 1) * ROW_HEIGHT);
     surface.style.width = width + 'px';
     surface.style.height = height + 'px';
@@ -25,9 +37,11 @@ export function createVirtualGrid(container, options) {
     const firstRow = Math.max(0, Math.floor(viewport.scrollTop / ROW_HEIGHT) - OVERSCAN);
     const visibleRows = Math.ceil(viewport.clientHeight / ROW_HEIGHT) + OVERSCAN * 2;
     const lastRow = Math.min(rows.length, firstRow + visibleRows);
-    const firstColumn = Math.max(0, Math.floor(Math.max(0, viewport.scrollLeft - 54) / COLUMN_WIDTH) - 2);
-    const visibleColumns = Math.ceil(viewport.clientWidth / COLUMN_WIDTH) + 4;
-    const lastColumn = Math.min(columns, firstColumn + visibleColumns);
+    let firstColumn = 0;
+    while (firstColumn < columns && offsetAt(firstColumn + 1) < viewport.scrollLeft) firstColumn += 1;
+    firstColumn = Math.max(0, firstColumn - 2);
+    let lastColumn = firstColumn;
+    while (lastColumn < columns && offsetAt(lastColumn) < viewport.scrollLeft + viewport.clientWidth + 2 * COLUMN_WIDTH) lastColumn += 1;
     const fragment = document.createDocumentFragment();
 
     const corner = document.createElement('div');
@@ -39,7 +53,8 @@ export function createVirtualGrid(container, options) {
       const cell = document.createElement('button');
       cell.type = 'button';
       cell.className = 'grid-cell grid-header';
-      cell.style.transform = `translate(${54 + column * COLUMN_WIDTH}px, ${viewport.scrollTop}px)`;
+      cell.style.width = widthAt(column) + 'px';
+      cell.style.transform = `translate(${offsetAt(column)}px, ${viewport.scrollTop}px)`;
       cell.textContent = header[column] || columnLabel(column);
       cell.title = cell.textContent;
       if (typeof options.onHeaderClick === 'function') cell.addEventListener('click', () => options.onHeaderClick(column));
@@ -57,7 +72,8 @@ export function createVirtualGrid(container, options) {
       for (let column = firstColumn; column < lastColumn; column += 1) {
         const cell = document.createElement('div');
         cell.className = 'grid-cell grid-value';
-        cell.style.transform = `translate(${54 + column * COLUMN_WIDTH}px, ${(rowIndex + 1) * ROW_HEIGHT}px)`;
+        cell.style.width = widthAt(column) + 'px';
+        cell.style.transform = `translate(${offsetAt(column)}px, ${(rowIndex + 1) * ROW_HEIGHT}px)`;
         const value = sourceRow[column] == null ? '' : String(sourceRow[column]);
         cell.textContent = value;
         cell.title = value;
@@ -81,6 +97,7 @@ export function createVirtualGrid(container, options) {
       rows = next.rows || [];
       columns = Math.max(1, next.columns || columns);
       header = next.header || header;
+      columnWidths = next.columnWidths || columnWidths;
       viewport.scrollTop = 0;
       schedule();
     },

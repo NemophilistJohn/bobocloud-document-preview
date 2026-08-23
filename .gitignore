@@ -4,4 +4,5 @@ artifacts/*
 !artifacts/*.boboplugin
 !artifacts/*.boboplugin.sha256
 coverage/
+test-results/
 *.log

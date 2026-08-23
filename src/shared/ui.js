@@ -144,7 +144,7 @@ export function previewError(key) {
 export function showPreviewError(body, context, error) {
   const state = showStatus(body, context, 'Preview unavailable', 'error');
   const key = error && error.code === 'DOCUMENT_ARCHIVE_UNSAFE'
-    ? 'The spreadsheet archive did not pass safety checks.'
+    ? 'The document archive did not pass safety checks.'
     : (error && typeof error.previewMessageKey === 'string'
       ? error.previewMessageKey
       : 'The document is damaged or uses an unsupported feature.');

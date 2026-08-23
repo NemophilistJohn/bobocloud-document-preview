@@ -1,15 +1,16 @@
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { existsSync } from 'node:fs';
-import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 
 const repositoryRoot = path.resolve(import.meta.dirname, '..');
-const siblingHost = path.resolve(repositoryRoot, '..', '..', 'my-electron-app-document-preview-host', 'client');
+const siblingHost = path.resolve(repositoryRoot, '..', 'client');
 const hostClient = process.env.BOBOCLOUD_HOST_CLIENT || (existsSync(path.join(siblingHost, 'main', 'plugins.js')) ? siblingHost : '');
-const defaultArtifact = path.join(repositoryRoot, 'artifacts', 'bobocloud.document-preview-1.0.0.boboplugin');
+const packageVersion = JSON.parse(await readFile(path.join(repositoryRoot, 'package.json'), 'utf8')).version;
+const defaultArtifact = path.join(repositoryRoot, 'artifacts', `bobocloud.document-preview-${packageVersion}.boboplugin`);
 const artifact = process.env.BOBOCLOUD_PLUGIN_ARTIFACT || (existsSync(defaultArtifact) ? defaultArtifact : '');
 
 test('the real archive installs and reads through the API 1.3 document broker', { skip: !hostClient || !artifact }, async (t) => {
@@ -46,7 +47,7 @@ test('the real archive installs and reads through the API 1.3 document broker', 
   assert.deepEqual(installed.grantedPermissions, ['documentViews.register', 'documents.read']);
   await controller.setEnabled(installed.id, true);
 
-  for (const kind of ['markdown', 'csv', 'excel', 'pdf']) {
+  for (const kind of ['markdown', 'csv', 'excel', 'pdf', 'word', 'image', 'notebook', 'archive']) {
     const viewerId = `bobocloud.document-preview.${kind}`;
     const loaded = await controller.loadDocumentView(installed.id, viewerId);
     assert.match(loaded.entry.source, /activate/);

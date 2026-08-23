@@ -13,6 +13,12 @@ assert.ok(files['manifest.json'], 'manifest.json must be at archive root');
 const manifest = JSON.parse(new TextDecoder().decode(files['manifest.json']));
 assert.equal(manifest.schemaVersion, 2);
 assert.deepEqual(manifest.permissions, ['documentViews.register', 'documents.read']);
+assert.equal(manifest.contributes.documentViewers.length, 8);
+assert.deepEqual(new Set(manifest.contributes.documentViewers.map((viewer) => viewer.entry)), new Set([
+  'dist/markdown-view.js', 'dist/csv-view.js', 'dist/excel-view.js', 'dist/pdf-view.js',
+  'dist/docx-view.js', 'dist/image-view.js', 'dist/notebook-view.js', 'dist/archive-view.js'
+]));
+assert.ok(files['dist/docx-worker.js'], 'Word viewer worker must be packaged');
 assert.equal(Object.keys(files).some((name) => name.startsWith('node_modules/')), false);
 const actualFiles = Object.keys(files).filter((name) => name !== 'manifest.json').sort();
 assert.deepEqual(actualFiles, Object.keys(manifest.integrity.files).sort());

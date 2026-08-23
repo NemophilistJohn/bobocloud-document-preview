@@ -10,5 +10,6 @@ The distributed plugin bundles the following components:
 | Marked | 18.0.10 | MIT |
 | DOMPurify | 3.4.14 | MPL-2.0 OR Apache-2.0 |
 | Lucide | 1.33.0 | ISC |
+| Mammoth.js | 1.12.1 | BSD-2-Clause |
 
 The packaging toolchain additionally uses esbuild 0.28.2 and fflate 0.8.3. Consult each dependency package for its complete license text and attribution.

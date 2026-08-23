@@ -16,7 +16,12 @@ export async function buildAll() {
       'markdown-view': 'src/markdown-view.js',
       'csv-view': 'src/csv-view.js',
       'excel-view': 'src/excel-view.js',
-      'pdf-view': 'src/pdf-view.js'
+      'pdf-view': 'src/pdf-view.js',
+      'docx-view': 'src/docx-view.js',
+      'docx-worker': 'src/docx-worker.js',
+      'image-view': 'src/image-view.js',
+      'notebook-view': 'src/notebook-view.js',
+      'archive-view': 'src/archive-view.js'
     },
     outdir: 'dist',
     bundle: true,
@@ -35,7 +40,10 @@ export async function buildAll() {
   await cp(path.join(root, 'src', 'view.css'), path.join(dist, 'view.css'));
   await cp(path.join(root, 'node_modules', 'pdfjs-dist', 'legacy', 'build', 'pdf.worker.min.mjs'), path.join(dist, 'pdf.worker.min.mjs'));
 
-  for (const fileName of ['markdown-view.js', 'csv-view.js', 'excel-view.js', 'pdf-view.js', 'pdf.worker.min.mjs', 'view.css']) {
+  for (const fileName of [
+    'markdown-view.js', 'csv-view.js', 'excel-view.js', 'pdf-view.js', 'pdf.worker.min.mjs',
+    'docx-view.js', 'docx-worker.js', 'image-view.js', 'notebook-view.js', 'archive-view.js', 'view.css'
+  ]) {
     const info = await stat(path.join(dist, fileName));
     if (info.size > MAX_VIEW_FILE_BYTES) throw new Error(fileName + ' exceeds the 8 MiB document-view resource limit.');
   }
