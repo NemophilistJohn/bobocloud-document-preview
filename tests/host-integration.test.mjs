@@ -5,15 +5,17 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
+import { requireHostTests, resolveHostClient } from './support/host-client.mjs';
 
 const repositoryRoot = path.resolve(import.meta.dirname, '..');
-const siblingHost = path.resolve(repositoryRoot, '..', 'client');
-const hostClient = process.env.BOBOCLOUD_HOST_CLIENT || (existsSync(path.join(siblingHost, 'main', 'plugins.js')) ? siblingHost : '');
+const hostClient = resolveHostClient(repositoryRoot);
 const packageVersion = JSON.parse(await readFile(path.join(repositoryRoot, 'package.json'), 'utf8')).version;
 const defaultArtifact = path.join(repositoryRoot, 'artifacts', `bobocloud.document-preview-${packageVersion}.boboplugin`);
 const artifact = process.env.BOBOCLOUD_PLUGIN_ARTIFACT || (existsSync(defaultArtifact) ? defaultArtifact : '');
+const hostAvailable = Boolean(hostClient && artifact && existsSync(artifact));
+requireHostTests(hostAvailable, 'Document preview host integration');
 
-test('the real archive installs and reads through the API 1.3 document broker', { skip: !hostClient || !artifact }, async (t) => {
+test('the real archive installs and reads through the API 1.3 document broker', { skip: !hostAvailable }, async (t) => {
   const require = createRequire(import.meta.url);
   const { createPluginController } = require(path.join(hostClient, 'main', 'plugins.js'));
   const root = await mkdtemp(path.join(os.tmpdir(), 'bobocloud-document-preview-host-'));

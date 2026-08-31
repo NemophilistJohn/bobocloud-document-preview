@@ -15,7 +15,7 @@ BOBOCloud 第二个官方插件。在编辑器工作区内，以只读方式预�
 | Jupyter Notebook (`.ipynb`) | Markdown、代码、纯文本/安全 HTML/内嵌图片输出；不执行代码或 widgets |
 | ZIP 容器 (`.zip`, `.jar`, `.war`, `.ear`, `.apk`, `.whl`, `.epub`, `.vsix`, `.nupkg`) | 安全目录检查、搜索、排序与压缩信息；不解压到磁盘 |
 
-旧式二进制 `.xls`、`.doc`、`.ppt` 不在 1.1.0 的支持范围内。插件不会执行 Excel 公式、Office 宏、Notebook 代码或 HTML 脚本。
+旧式二进制 `.xls`、`.doc`、`.ppt` 不在 1.1.1 的支持范围内。插件不会执行 Excel 公式、Office 宏、Notebook 代码或 HTML 脚本。
 
 ## 安装
 
@@ -44,9 +44,11 @@ npm run verify
 npm run test:ui
 ```
 
-`test:ui` 会使用相邻主项目的 Electron 客户端安装当前真实产物，并验证新增格式的隔离渲染。
+`test:ui` 会使用 `BOBOCLOUD_HOST_CLIENT` 指定的 Electron 客户端，或自动发现相邻的
+`my-electron-app/client`，安装当前真实产物并验证新增格式的隔离渲染。发布 CI 会固定宿主提交，
+并将缺少宿主或 Electron 依赖视为失败，而不是跳过兼容性测试。
 
-产物位于 `artifacts/bobocloud.document-preview-1.1.0.boboplugin`，旁边的 `.sha256` 文件用于独立校验。
+产物位于 `artifacts/bobocloud.document-preview-1.1.1.boboplugin`，旁边的 `.sha256` 文件用于独立校验。
 
 ## English
 
@@ -54,7 +56,7 @@ BOBOCloud's second official plugin provides read-only previews for Markdown, CSV
 
 Official status does not grant a sandbox bypass. The activation Worker and each opaque-origin document iframe receive only the two declared capabilities. A viewer can read the one document explicitly opened by the user through a short-lived, revalidated handle; it cannot enumerate the workspace, access paths, use the network, or reach Electron and host objects.
 
-Legacy binary `.xls`, `.doc`, and `.ppt` are intentionally unsupported in 1.1.0. Excel formulas, Office macros, Notebook code, widgets, and embedded HTML scripts are never executed.
+Legacy binary `.xls`, `.doc`, and `.ppt` are intentionally unsupported in 1.1.1. Excel formulas, Office macros, Notebook code, widgets, and embedded HTML scripts are never executed.
 
 ## License
 

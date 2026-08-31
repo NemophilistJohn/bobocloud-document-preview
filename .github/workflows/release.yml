@@ -13,15 +13,56 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        host:
+          - label: minimum-2.6.1
+            ref: 29872ac9a0cd876b5044374cbf5ba6523481e99d
+            upload: false
+          - label: current-2.8.0
+            ref: 5fd2899c55f71d76df12a934c51e83d9b3a82f55
+            upload: true
+    name: Verify (${{ matrix.host.label }})
     steps:
       - uses: actions/checkout@v4
+      - name: Check out compatible BOBOCloud host
+        uses: actions/checkout@v4
+        with:
+          repository: NemophilistJohn/BOBOcloud-A-cloud-based-remote-compilation-platform
+          ref: ${{ matrix.host.ref }}
+          path: host
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
-      - run: npm run verify
+          cache-dependency-path: |
+            package-lock.json
+            host/client/package-lock.json
+      - name: Install plugin and host dependencies
+        run: |
+          npm ci
+          npm ci --prefix host/client
+      - name: Prepare host renderer
+        run: |
+          npm --prefix host/client run prepare:rclone --if-present
+          npm --prefix host/client run build:renderer:dev
+      - name: Verify package and real host integration
+        env:
+          BOBOCLOUD_HOST_CLIENT: ${{ github.workspace }}/host/client
+          BOBOCLOUD_REQUIRE_HOST_TESTS: "1"
+        run: npm run verify
+      - name: Verify release tag
+        if: startsWith(github.ref, 'refs/tags/')
+        run: npm run release:check
+      - name: Run isolated document-view UI
+        env:
+          BOBOCLOUD_HOST_CLIENT: ${{ github.workspace }}/host/client
+          BOBOCLOUD_REQUIRE_HOST_TESTS: "1"
+        run: xvfb-run -a npm run test:ui
       - uses: actions/upload-artifact@v4
+        if: matrix.host.upload
         with:
           name: bobocloud-document-preview
           path: artifacts/*

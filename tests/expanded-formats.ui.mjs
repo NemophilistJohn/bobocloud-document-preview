@@ -6,14 +6,16 @@ import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import { strToU8, zipSync } from 'fflate';
+import { requireHostTests, resolveHostClient } from './support/host-client.mjs';
 
 const repositoryRoot = path.resolve(import.meta.dirname, '..');
-const hostClient = process.env.BOBOCLOUD_HOST_CLIENT || path.resolve(repositoryRoot, '..', 'client');
+const hostClient = resolveHostClient(repositoryRoot);
 const packageVersion = JSON.parse(await readFile(path.join(repositoryRoot, 'package.json'), 'utf8')).version;
 const artifact = process.env.BOBOCLOUD_PLUGIN_ARTIFACT || path.join(repositoryRoot, 'artifacts', `bobocloud.document-preview-${packageVersion}.boboplugin`);
 const hostAvailable = existsSync(path.join(hostClient, 'main', 'plugins.js'))
   && existsSync(path.join(hostClient, 'node_modules', 'electron'))
   && existsSync(artifact);
+requireHostTests(hostAvailable, 'Document preview Electron UI integration');
 
 function electronPath() {
   const executable = process.platform === 'win32' ? 'electron.exe' : 'electron';
