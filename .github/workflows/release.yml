@@ -61,11 +61,21 @@ jobs:
           BOBOCLOUD_HOST_CLIENT: ${{ github.workspace }}/host/client
           BOBOCLOUD_REQUIRE_HOST_TESTS: "1"
         run: xvfb-run -a npm run test:ui
+      - name: Select current release artifacts
+        if: matrix.host.upload
+        id: artifact
+        shell: bash
+        run: |
+          version="$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version")"
+          echo "package=artifacts/bobocloud.document-preview-${version}.boboplugin" >> "$GITHUB_OUTPUT"
+          echo "checksum=artifacts/bobocloud.document-preview-${version}.boboplugin.sha256" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v4
         if: matrix.host.upload
         with:
           name: bobocloud-document-preview
-          path: artifacts/*
+          path: |
+            ${{ steps.artifact.outputs.package }}
+            ${{ steps.artifact.outputs.checksum }}
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
