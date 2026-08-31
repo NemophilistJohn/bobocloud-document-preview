@@ -22,10 +22,26 @@ function sha256(bytes) {
   return createHash('sha256').update(bytes).digest('hex');
 }
 
+function fixedZipMtime() {
+  // ZIP stores local DOS date components. Constructing a UTC instant would
+  // encode different metadata in different runner time zones.
+  return new Date(2026, 0, 1, 0, 0, 0);
+}
+
+export function createDeterministicArchive(entries) {
+  const names = Object.keys(entries).sort((left, right) => {
+    if (left === 'manifest.json') return -1;
+    if (right === 'manifest.json') return 1;
+    return left.localeCompare(right);
+  });
+  const zipEntries = {};
+  for (const name of names) zipEntries[name] = [entries[name], { mtime: fixedZipMtime() }];
+  return Buffer.from(zipSync(zipEntries, { level: 9 }));
+}
+
 export async function packagePlugin() {
   await buildAll();
   await rm(packageRoot, { recursive: true, force: true });
-  await rm(artifacts, { recursive: true, force: true });
   await mkdir(packageRoot, { recursive: true });
   await mkdir(artifacts, { recursive: true });
 
@@ -42,20 +58,22 @@ export async function packagePlugin() {
   await writeFile(manifestPath, manifestBytes);
   await writeFile(path.join(packageRoot, 'manifest.json'), manifestBytes);
 
-  const zipEntries = {
-    'manifest.json': [manifestBytes, { mtime: new Date('2026-01-01T00:00:00Z') }]
-  };
+  const archiveEntries = { 'manifest.json': manifestBytes };
   for (const relative of packageFiles) {
     const source = await readFile(path.join(root, relative));
     const destination = path.join(packageRoot, ...relative.split('/'));
     await mkdir(path.dirname(destination), { recursive: true });
     await cp(path.join(root, relative), destination);
-    zipEntries[relative] = [source, { mtime: new Date('2026-01-01T00:00:00Z') }];
+    archiveEntries[relative] = source;
   }
 
   const archiveName = `${manifest.id}-${manifest.version}.boboplugin`;
-  const archive = Buffer.from(zipSync(zipEntries, { level: 9 }));
+  const archive = createDeterministicArchive(archiveEntries);
   const archivePath = path.join(artifacts, archiveName);
+  await Promise.all([
+    rm(archivePath, { force: true }),
+    rm(archivePath + '.sha256', { force: true })
+  ]);
   await writeFile(archivePath, archive);
   await writeFile(archivePath + '.sha256', sha256(archive) + '  ' + archiveName + '\n');
   process.stdout.write(`${archivePath}\nSHA-256 ${sha256(archive)}\n`);

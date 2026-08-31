@@ -1,6 +1,6 @@
 {
   "name": "bobocloud-document-preview",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "type": "module",
   "description": "Official isolated office, data, image, notebook, archive, and PDF preview plugin for BOBOCloud.",
@@ -8,6 +8,7 @@
     "clean": "node scripts/clean.mjs",
     "build": "node scripts/build.mjs",
     "package": "node scripts/package.mjs",
+    "release:check": "node scripts/check-release-tag.mjs",
     "test": "node --test tests/*.test.mjs",
     "test:ui": "node --test tests/*.ui.mjs",
     "verify": "npm run package && npm run test && node scripts/verify-package.mjs"

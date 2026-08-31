@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
+import { pathToFileURL } from 'node:url';
 import { zipSync } from 'fflate';
 import { decodeText, normalizeCell } from '../src/shared/encoding.js';
 import { parseDelimited } from '../src/shared/csv-parser.js';
@@ -11,6 +13,26 @@ import { notebookText, parseNotebook } from '../src/shared/notebook-parser.js';
 import { inspectZip } from '../src/shared/zip-safety.js';
 
 const root = path.resolve(import.meta.dirname, '..');
+
+test('plugin archive ZIP metadata is deterministic across process time zones', () => {
+  const packageModule = pathToFileURL(path.join(root, 'scripts', 'package.mjs')).href;
+  const source = [
+    `import { createDeterministicArchive } from ${JSON.stringify(packageModule)};`,
+    "import { createHash } from 'node:crypto';",
+    "const archive = createDeterministicArchive({ 'manifest.json': new TextEncoder().encode('{\"version\":1}'), 'dist/extension.js': new TextEncoder().encode('export const ready = true;\\n') });",
+    "process.stdout.write(createHash('sha256').update(archive).digest('hex'));"
+  ].join('\n');
+  const digests = ['UTC', 'Asia/Hong_Kong', 'America/Los_Angeles'].map((timeZone) => {
+    const child = spawnSync(process.execPath, ['--input-type=module', '--eval', source], {
+      encoding: 'utf8',
+      env: { ...process.env, TZ: timeZone }
+    });
+    assert.equal(child.status, 0, child.stderr || `archive subprocess failed for ${timeZone}`);
+    assert.match(child.stdout, /^[a-f0-9]{64}$/);
+    return child.stdout;
+  });
+  assert.equal(new Set(digests).size, 1);
+});
 
 test('manifest grants only the isolated document-view capabilities', async () => {
   const manifest = JSON.parse(await readFile(path.join(root, 'manifest.json'), 'utf8'));
