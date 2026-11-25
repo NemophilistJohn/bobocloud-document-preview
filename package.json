@@ -1,6 +1,6 @@
 {
   "name": "bobocloud-document-preview",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "private": true,
   "type": "module",
   "description": "Official isolated office, data, image, notebook, archive, and PDF preview plugin for BOBOCloud.",

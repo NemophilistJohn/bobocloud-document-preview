@@ -15,7 +15,7 @@ const artifact = process.env.BOBOCLOUD_PLUGIN_ARTIFACT || (existsSync(defaultArt
 const hostAvailable = Boolean(hostClient && artifact && existsSync(artifact));
 requireHostTests(hostAvailable, 'Document preview host integration');
 
-test('the real archive installs and reads through the API 1.3 document broker', { skip: !hostAvailable }, async (t) => {
+for (const hostVersion of ['2.6.1', '3.0.0']) test(`the real archive installs and reads through the document broker on host ${hostVersion}`, { skip: !hostAvailable }, async (t) => {
   const require = createRequire(import.meta.url);
   const { createPluginController } = require(path.join(hostClient, 'main', 'plugins.js'));
   const root = await mkdtemp(path.join(os.tmpdir(), 'bobocloud-document-preview-host-'));
@@ -28,7 +28,7 @@ test('the real archive installs and reads through the API 1.3 document broker', 
   const sender = { id: 41, once() {}, isDestroyed: () => false, send() {} };
   const workspace = { rootPath: workspaceRoot, workspaceIdentity: 7 };
   const controller = createPluginController({
-    app: { getPath: () => root, getVersion: () => '2.6.1' },
+    app: { getPath: () => root, getVersion: () => hostVersion },
     ipcMain: { handle: (channel, handler) => handlers.set(channel, handler) },
     dialog: { showOpenDialog: async () => ({ canceled: true, filePaths: [] }) },
     shell: { openPath: async () => '' },
